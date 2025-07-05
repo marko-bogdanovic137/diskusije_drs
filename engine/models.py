@@ -1,4 +1,5 @@
 from .extensions import db
+from datetime import datetime
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -15,3 +16,18 @@ class User(db.Model):
     phone = db.Column(db.String(30))
     is_admin = db.Column(db.Boolean, default=False)
     is_approved = db.Column(db.Boolean, default=False)
+
+class Discussion(db.Model):
+    __tablename__ = 'discussions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # tema (dodajemo kasnije kao posebnu tabelu)
+    topic = db.Column(db.String(50), nullable=False)
+
+    # korisnik koji je postavio diskusiju
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('discussions', lazy=True))

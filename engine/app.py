@@ -1,7 +1,9 @@
 from flask import Flask
 from dotenv import load_dotenv
 from .extensions import db, migrate
-from .models import User
+from .models import User, Discussion
+from .routes.auth_routes import auth_bp
+from .routes.discussion_routes import discussion_bp
 import os
 
 # Učitavanje .env fajla
@@ -10,9 +12,13 @@ load_dotenv()
 app = Flask(__name__)
 
 # Konfiguracija baze
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.register_blueprint(auth_bp, url_prefix='/api')
+app.register_blueprint(discussion_bp, url_prefix='/api')
+
 
 # Inicijalizacija ekstenzija
 db.init_app(app)
