@@ -1,45 +1,80 @@
-# Platforma za diskusije
+# Diskusije – Flask + MySQL aplikacija
 
-## Arhitektura
+Cilj je napraviti platformu za diskusije sa registracijom, administracijom korisnika, objavama i osnovnim društvenim funkcijama.
 
-Projekat se sastoji iz tri komponente:
-- UI: Flask frontend aplikacija (dolazi kasnije)
-- Engine: Flask API aplikacija (trenutno implementirana)
-- DB: MySQL baza podataka (localhost, šema `diskusije`)
+## ⚙️ Pokretanje API-ja (lokalno)
 
-## Tehnologije
+1. Kloniraj repozitorijum i pozicioniraj se u root folder:
+cd diskusije-projekat
 
-- Python 3.13 (pipenv za dependency management)
-- Flask, Flask-SQLAlchemy, Flask-Migrate
-- MySQL
-- Docker (planirano za distribuciju)
-- Git + GitHub (za verzionisanje i dokumentaciju)
-- WebSocket (planiran za admin panel)
-
-## Pokretanje API-ja
-
-1. Postavi `.env` fajl (primer se nalazi u `engine/.env`)
-2. Pokreni virtualno okruženje:
+2. Pokreni pipenv okruženje i instaliraj biblioteke:
 pipenv shell
 pipenv install
-3. Pokreni aplikaciju:
+
+3. Postavi `.env` fajl u `engine/` folder (primer sadržaja):
+DB_USER=root
+DB_PASSWORD=1337
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=diskusije
+SECRET_KEY=supertajna123
+
+4. Pokreni aplikaciju:
 cd engine
 python app.py
 
-## Baza
 
-Kreirana je šema `diskusije` u MySQL.
-Trenutno postoji model `User` sa sledećim poljima:
-- username, email, password, ime, prezime, adresa, grad, država, telefon
-- is_admin (bool), is_approved (bool)
+Aplikacija je tada dostupna na: [http://localhost:5000](http://localhost:5000)
 
-Migracije su omogućene uz Flask-Migrate.
+## Baza podataka
 
-## Uradjeno do sada
+- Baza: MySQL (lokalni server)
+- Šema: `diskusije`
+- Alat za migracije: Flask-Migrate
 
-- Kreirana struktura projekta
-- Povezan API sa MySQL bazom
-- Migracije omogućene
-- Model korisnika kreiran
+Postojeće tabele:
+
+- `users` – korisnički podaci + status odobrenja
+- `discussions` – diskusije objavljene od strane korisnika
+- `alembic_version` – interna tabela za praćenje migracija
+
+## Do sada implementirano
+
+- Povezan Flask API sa MySQL bazom
+- Kreiran `User` model
+- Registrovanje korisnika (uz pending status)
+- Pregled i odobravanje korisnika od strane admina
+- Kreiranje i listanje diskusija
+- Flask-Migrate migracioni sistem
 - Git repozitorijum postavljen
+
+## Struktura projekta
+diskusije-projekat/
+│
+├── engine/
+│ ├── app.py # Glavna Flask aplikacija (API servis)
+│ ├── extensions.py # SQLAlchemy + Migrate ekstenzije
+│ ├── models.py # SQLAlchemy modeli (User, Discussion)
+│ ├── routes/
+│ │ ├── auth_routes.py # Rute za registraciju, login, admin potvrdu
+│ │ └── discussion_routes.py # Rute za diskusije (GET, POST)
+│ ├── migrations/ # Flask-Migrate fajlovi
+│ └── .env # Environment varijable
+│
+├── Pipfile
+├── Pipfile.lock
+├── README.md
+├── dev-log.md
+└── .gitignore
+
+## Tehnologije koje se koriste
+
+- Python 3.13
+- Flask
+- SQLAlchemy
+- Flask-Migrate
+- Pipenv
+- MySQL (lokalno, preko Workbench-a)
+- Postman (za testiranje API zahteva)
+- Git (verzionisanje)
 
