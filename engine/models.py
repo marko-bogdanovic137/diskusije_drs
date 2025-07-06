@@ -31,3 +31,29 @@ class Discussion(db.Model):
     # korisnik koji je postavio diskusiju
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('discussions', lazy=True))
+
+    
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.now())
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    discussion_id = db.Column(db.Integer, db.ForeignKey('discussions.id'), nullable=False)
+
+    user = db.relationship('User', backref='comments')
+    discussion = db.relationship('Discussion', backref='comments')
+
+class LikeDislike(db.Model):
+    __tablename__ = 'likes_dislikes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    discussion_id = db.Column(db.Integer, db.ForeignKey('discussions.id'), nullable=False)
+    is_like = db.Column(db.Boolean, nullable=False)  # True = Like, False = Dislike
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'discussion_id', name='unique_user_discussion_vote'),
+    )

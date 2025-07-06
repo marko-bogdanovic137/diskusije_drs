@@ -3,7 +3,9 @@ from dotenv import load_dotenv
 from .extensions import db, migrate
 from .models import User, Discussion
 from .routes.auth_routes import auth_bp
+from .routes.comment_routes import comment_bp
 from .routes.discussion_routes import discussion_bp
+from .routes.vote_routes import vote_bp
 import os
 
 # Učitavanje .env fajla
@@ -18,6 +20,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(discussion_bp, url_prefix='/api')
+app.register_blueprint(comment_bp, url_prefix='/api')
+app.register_blueprint(vote_bp, url_prefix='/api')
 
 
 # Inicijalizacija ekstenzija
