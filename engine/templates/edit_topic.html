@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Izmeni temu{% endblock %}
+
+{% block content %}
+<h2>Izmeni temu</h2>
+
+<form method="POST" action="{{ url_for('edit_topic_ui', topic_id=topic.id) }}">
+  <div class="mb-3">
+    <label for="name" class="form-label">Naziv</label>
+    <input type="text" class="form-control" id="name" name="name" value="{{ topic.name }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Opis</label>
+    <textarea class="form-control" id="description" name="description" rows="3">{{ topic.description }}</textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Sačuvaj izmene</button>
+</form>
+
+<a href="{{ url_for('topics_ui') }}" class="btn btn-secondary mt-3">Nazad</a>
+{% endblock %}

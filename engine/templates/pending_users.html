@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Korisnici na odobrenju</h2>
+
+{% if users %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th><th>Korisničko ime</th><th>Email</th><th>Akcije</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <form method="post" action="{{ url_for('approve_user_ui', user_id=user.id) }}" style="display:inline;">
+          <button class="btn btn-success btn-sm">Odobri</button>
+        </form>
+        <form method="post" action="{{ url_for('reject_user_ui', user_id=user.id) }}" style="display:inline;">
+          <button class="btn btn-danger btn-sm">Odbij</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p>Nema korisnika za odobravanje.</p>
+{% endif %}
+{% endblock %}

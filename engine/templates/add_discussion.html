@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Nova diskusija{% endblock %}
+
+{% block content %}
+<h2>Kreiraj novu diskusiju</h2>
+
+<form method="POST" action="{{ url_for('add_discussion_ui') }}">
+  <div class="mb-3">
+    <label for="title" class="form-label">Naslov</label>
+    <input type="text" class="form-control" id="title" name="title" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="content" class="form-label">Sadržaj</label>
+    <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="topic_id" class="form-label">Tema</label>
+    <select class="form-select" name="topic_id" required>
+      {% for topic in topics %}
+        <option value="{{ topic.id }}">{{ topic.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Objavi diskusiju</button>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Otkaži</a>
+</form>
+{% endblock %}

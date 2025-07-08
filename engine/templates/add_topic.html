@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Dodaj novu temu{% endblock %}
+
+{% block content %}
+<h2>Dodaj novu temu</h2>
+
+<form method="POST" action="{{ url_for('add_topic_ui') }}">
+  <div class="mb-3">
+    <label for="name" class="form-label">Naziv teme</label>
+    <input type="text" class="form-control" id="name" name="name" required>
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Opis</label>
+    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+  </div>
+  <button type="submit" class="btn btn-success">Sačuvaj</button>
+</form>
+
+<a href="{{ url_for('topics_ui') }}" class="btn btn-secondary mt-3">Nazad na listu tema</a>
+{% endblock %}

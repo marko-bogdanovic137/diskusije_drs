@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Izmena diskusije{% endblock %}
+
+{% block content %}
+<h2>Izmena diskusije</h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="title" class="form-label">Naslov</label>
+    <input type="text" class="form-control" id="title" name="title" value="{{ discussion.title }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="content" class="form-label">Sadržaj</label>
+    <textarea class="form-control" id="content" name="content" rows="4" required>{{ discussion.content }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="topic_id" class="form-label">Tema</label>
+    <select class="form-select" name="topic_id" required>
+      {% for topic in topics %}
+        <option value="{{ topic.id }}" {% if topic.id == discussion.topic_id %}selected{% endif %}>
+          {{ topic.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Sačuvaj izmene</button>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Nazad</a>
+</form>
+{% endblock %}

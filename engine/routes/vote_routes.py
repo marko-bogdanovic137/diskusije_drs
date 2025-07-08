@@ -24,3 +24,10 @@ def vote():
 
     db.session.commit()
     return jsonify({'message': 'Glas uspešno zabeležen'})
+
+@vote_bp.route('/discussions/<int:discussion_id>/votes', methods=['GET'])
+def get_vote_counts(discussion_id):
+    likes = LikeDislike.query.filter_by(discussion_id=discussion_id, is_like=True).count()
+    dislikes = LikeDislike.query.filter_by(discussion_id=discussion_id, is_like=False).count()
+    return jsonify({'likes': likes, 'dislikes': dislikes})
+

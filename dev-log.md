@@ -30,6 +30,12 @@
 - Testirao u Postman-u sa pravim podacima (user_id, topic, itd.)
 - Updateovao `README.md` i nastavio da pišem ovaj log
 
+## Dan 4
+
+- Omogućena izmena korisničkog profila (PUT /update-profile/<user_id>)
+- Dodata validacija inputa i zaštita korisničkih podataka
+- Testirano preko Postman-a
+
 ---
 
 ## Plan za dalje

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}Diskusija: {{ discussion.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ discussion.title }}</h2>
+<p>{{ discussion.content }}</p>
+<p><strong>Tema:</strong> {{ discussion.topic.name }}</p>
+<small>Kreirao: {{ discussion.user.username }} | {{ discussion.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+
+<hr>
+<h4>Komentari</h4>
+
+{% if comments %}
+  <ul class="list-group mb-3">
+    {% for c in comments %}
+      <li class="list-group-item">
+        <strong>{{ c.author }}</strong> - <small>{{ c.created_at[:16].replace('T', ' ') }}</small>
+        <p class="mb-0">{{ c.content }}</p>
+        {% if session.get('username') == c.author or session.get('is_admin') or session.get('user_id') == discussion.user.id
+        %}
+  <form method="POST" action="{{ url_for('delete_comment_ui', comment_id=c.id, discussion_id=discussion.id) }}"
+        onsubmit="return confirm('Da li ste sigurni da želite da obrišete komentar?')"
+        style="display:inline;">
+    <button type="submit" class="btn btn-danger btn-sm mt-1">Obriši</button>
+  </form>
+{% endif %}
+
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Nema komentara još uvek.</p>
+{% endif %}
+
+{% if session.get('user_id') %}
+  <form method="POST" class="mt-4">
+    <div class="mb-3">
+      <label for="content" class="form-label">Dodaj komentar</label>
+      <textarea class="form-control" name="content" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Postavi komentar</button>
+  </form>
+{% else %}
+  <p class="text-muted">Morate biti prijavljeni da biste komentarisali.</p>
+{% endif %}
+
+<a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Nazad</a>
+{% endblock %}

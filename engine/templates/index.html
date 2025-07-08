@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block title %}Početna - Diskusije{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+    {% if session.get('username') %}
+      <span class="me-2">Prijavljen kao: <strong>{{ session['username'] }}</strong></span>
+      <a href="/logout" class="btn btn-outline-secondary btn-sm">Logout</a>
+    {% else %}
+      <a href="/login" class="btn btn-primary me-2">Login</a>
+      <a href="/register" class="btn btn-success">Register</a>
+    {% endif %}
+</div>
+
+{% if session.get('user_id') %}
+  <a href="{{ url_for('add_discussion_ui') }}" class="btn btn-success me-2">Nova diskusija</a>
+{% endif %}
+
+<h2>Sve diskusije</h2>
+<p><strong>Debug:</strong> Ukupan broj diskusija: {{ discussions|length }}</p>
+{% if session.get('is_admin') %}
+  <div class="mb-3">
+    <a href="{{ url_for('pending_users_ui') }}" class="btn btn-warning btn-sm">Odobravanje korisnika</a>
+    <a href="{{ url_for('topics_ui') }}" class="btn btn-secondary btn-sm">Teme</a>
+  </div>
+{% endif %}
+
+
+<form method="GET" class="mb-4" action="/">  
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text" name="title" class="form-control" placeholder="Pretraga po naslovu">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="author" class="form-control" placeholder="Pretraga po autoru">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="topic" class="form-control" placeholder="Pretraga po temi">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Pretraži</button>
+        </div>
+    </div>
+</form>
+
+{% if discussions %}
+  <span id="current-user-id" data-user-id="{{ session.get('user_id') or '' }}" style="display:none;"></span>
+
+  <ul class="list-group">
+    {% for item in discussions %}
+      {% set d = item.discussion %}
+      <li class="list-group-item">
+        <h5>{{ d.title }}</h5>
+        <p>{{ d.content }}</p>
+
+        {% if d.topic %}
+          <p class="mb-1"><strong>Tema:</strong> {{ d.topic.name }}</p>
+        {% endif %}
+
+        <p>
+          Lajkovi: <span id="likes-{{ d.id }}">👍 {{ item.likes }}</span> |
+          Dislajkovi: <span id="dislikes-{{ d.id }}">👎 {{ item.dislikes }}</span>
+        </p>
+
+        <small>Kreirao: {{ d.user.username }} | {{ d.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+        <br>
+
+        <a href="{{ url_for('view_discussion', discussion_id=d.id) }}" class="btn btn-outline-secondary btn-sm mt-2">Komentari</a>
+
+        {% if session.get('user_id') %}
+          <button class="btn btn-outline-success btn-sm mt-2" onclick="vote('{{ d.id }}', true)">Like</button>
+          <button class="btn btn-outline-danger btn-sm mt-2" onclick="vote('{{ d.id }}', false)">Dislike</button>
+        {% endif %}
+
+        {% if session.get('user_id') == d.user.id or session.get('is_admin') %}
+          <form method="POST" action="{{ url_for('delete_discussion_ui', discussion_id=d.id) }}" style="display:inline;">
+            <button class="btn btn-danger btn-sm mt-2" onclick="return confirm('Da li ste sigurni da želite da obrišete ovu diskusiju?')">Obriši</button>
+          </form>
+          <a href="{{ url_for('edit_discussion_ui', discussion_id=d.id) }}" class="btn btn-primary btn-sm mt-2">Izmeni</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Trenutno nema diskusija.</p>
+{% endif %}
+
+
+<script>
+  function vote(discussionId, isLike) {
+    const userId = document.getElementById('current-user-id').dataset.userId;
+
+    if (!userId) {
+      alert("Morate biti prijavljeni da biste glasali.");
+      return;
+    }
+
+    fetch("/api/vote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: parseInt(userId),
+        discussion_id: discussionId,
+        is_like: isLike
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        location.reload(); // ili osveži samo prikaz broja ako hoćeš
+      } else if (data.error) {
+        alert("Greška: " + data.error);
+      }
+    })
+    .catch(error => {
+      alert("Došlo je do greške: " + error);
+    });
+  }
+</script>
+{% endblock %}

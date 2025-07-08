@@ -19,18 +19,19 @@ class User(db.Model):
 
 class Discussion(db.Model):
     __tablename__ = 'discussions'
-
+    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # tema (dodajemo kasnije kao posebnu tabelu)
-    topic = db.Column(db.String(50), nullable=False)
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
+    topic = db.relationship('Topic', backref=db.backref('discussions', lazy=True))
 
-    # korisnik koji je postavio diskusiju
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('discussions', lazy=True))
+
+
 
     
 class Comment(db.Model):
@@ -38,13 +39,18 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=db.func.now())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Foreign key ka diskusiji
     discussion_id = db.Column(db.Integer, db.ForeignKey('discussions.id'), nullable=False)
 
-    user = db.relationship('User', backref='comments')
-    discussion = db.relationship('Discussion', backref='comments')
+    # Foreign key ka korisniku
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Veze
+    discussion = db.relationship('Discussion', backref=db.backref('comments', lazy=True, cascade="all, delete"))
+    user = db.relationship('User', backref=db.backref('comments', lazy=True))
+    
 
 class LikeDislike(db.Model):
     __tablename__ = 'likes_dislikes'
@@ -57,3 +63,11 @@ class LikeDislike(db.Model):
     __table_args__ = (
         db.UniqueConstraint('user_id', 'discussion_id', name='unique_user_discussion_vote'),
     )
+
+class Topic(db.Model):
+    __tablename__ = 'topics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+

@@ -26,7 +26,6 @@ def create_comment():
     db.session.add(comment)
     db.session.commit()
 
-    # 🔍 Detekcija @mention i slanje maila
     mentions = re.findall(r'@(\w+)', content)
     print("Detektovani mentions:", mentions)
 
@@ -59,3 +58,22 @@ def get_comments(discussion_id):
             'created_at': c.created_at.isoformat()
         })
     return jsonify(result)
+
+# Brisanje komentara
+@comment_bp.route('/comments/<int:comment_id>', methods=['DELETE'])
+def delete_comment(comment_id):
+    data = request.get_json()
+    user_id = data.get('user_id')
+
+    comment = Comment.query.get_or_404(comment_id)
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'Korisnik ne postoji'}), 404
+
+    if comment.user_id != user_id and not user.is_admin and comment.discussion.user_id != user_id:
+        return jsonify({'error': 'Nemate dozvolu da obrišete ovaj komentar'}), 403
+
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify({'message': 'Komentar obrisan'}), 200

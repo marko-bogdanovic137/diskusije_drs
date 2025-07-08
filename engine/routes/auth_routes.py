@@ -120,3 +120,38 @@ def login():
             'is_admin': user.is_admin
         }
     }), 200
+
+@auth_bp.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.get_json()
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'Korisnik nije pronađen'}), 404
+
+    # Privremena provera: korisnik može menjati samo svoj nalog (ili admin)
+    # Ako šalješ iz Postmana, obavezno dodaj "requesting_user_id" polje
+    requester_id = data.get('requesting_user_id')
+    requester = User.query.get(requester_id)
+    if not requester:
+        return jsonify({'error': 'Nevažeći ID onoga ko šalje zahtev'}), 400
+
+    if requester.id != user.id and not requester.is_admin:
+        return jsonify({'error': 'Nemate dozvolu da menjate ovaj nalog'}), 403
+
+    # Lista polja koja smeju da se menjaju
+    editable_fields = [
+        'username', 'email', 'password', 'first_name', 'last_name',
+        'address', 'city', 'country', 'phone'
+    ]
+
+    for field in editable_fields:
+        if field in data:
+            if field == 'password':
+                setattr(user, field, generate_password_hash(data[field]))
+            else:
+                setattr(user, field, data[field])
+
+    db.session.commit()
+
+    return jsonify({'message': 'Nalog je uspešno izmenjen'}), 200
