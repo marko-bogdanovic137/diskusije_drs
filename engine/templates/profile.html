@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<h2>Izmeni profil</h2>
+
+<form id="profile-form">
+  <div class="mb-3">
+    <label for="first_name">Ime</label>
+    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+  </div>
+  <div class="mb-3">
+    <label for="last_name">Prezime</label>
+    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+  </div>
+  <div class="mb-3">
+    <label for="address">Adresa</label>
+    <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}">
+  </div>
+  <div class="mb-3">
+    <label for="city">Grad</label>
+    <input type="text" class="form-control" id="city" name="city" value="{{ user.city }}">
+  </div>
+  <div class="mb-3">
+    <label for="country">Država</label>
+    <input type="text" class="form-control" id="country" name="country" value="{{ user.country }}">
+  </div>
+  <div class="mb-3">
+    <label for="phone">Telefon</label>
+    <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Sačuvaj izmene</button>
+</form>
+
+<script>
+  document.getElementById('profile-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const data = {
+      requesting_user_id: '{{ user.id }}',
+      first_name: document.getElementById('first_name').value,
+      last_name: document.getElementById('last_name').value,
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value,
+      country: document.getElementById('country').value,
+      phone: document.getElementById('phone').value
+    };
+
+    fetch(`/api/users/{{ user.id }}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.message) {
+        alert("Profil uspešno ažuriran!");
+        window.location.href = "/";
+      } else {
+        alert("Greška: " + data.error);
+      }
+    })
+    .catch(err => {
+      alert("Došlo je do greške: " + err);
+    });
+  });
+</script>
+{% endblock %}

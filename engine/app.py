@@ -106,7 +106,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        flash('Uspešno ste se registrovali. Sačekajte odobrenje administratora.', 'success')
+        flash('Uspesno ste se registrovali. Sacekajte odobrenje administratora.', 'success')
         return redirect('/')
 
     return render_template('register.html')
@@ -117,7 +117,6 @@ def login_ui():
         email = request.form['email']
         password = request.form['password']
 
-        # šaljemo POST ka API-ju
         response = requests.post('http://localhost:5000/api/login', json={
             'email': email,
             'password': password
@@ -130,7 +129,7 @@ def login_ui():
             session['is_admin'] = data['user']['is_admin']
             return redirect(url_for('index'))
         else:
-            flash(response.json().get('error', 'Greška prilikom prijave'))
+            flash(response.json().get('error', 'Greska prilikom prijave'))
 
     return render_template('login.html')
 
@@ -156,7 +155,7 @@ def pending_users_ui():
         users = response.json()
         return render_template('pending_users.html', users=users)
     else:
-        flash('Greška prilikom učitavanja korisnika.')
+        flash('Greska prilikom ucitavanja korisnika.')
         return redirect(url_for('index'))
 
 
@@ -170,7 +169,7 @@ def approve_user_ui(user_id):
     if response.status_code == 200:
         flash('Korisnik odobren.')
     else:
-        flash('Greška pri odobravanju.')
+        flash('Greska pri odobravanju.')
     return redirect(url_for('pending_users_ui'))
 
 
@@ -184,7 +183,7 @@ def reject_user_ui(user_id):
     if response.status_code == 200:
         flash('Korisnik odbijen.')
     else:
-        flash('Greška pri odbijanju.')
+        flash('Greska pri odbijanju.')
     return redirect(url_for('pending_users_ui'))
 
 
@@ -228,7 +227,6 @@ def delete_discussion_ui(discussion_id):
     user_id = session['user_id']
     is_admin = session.get('is_admin', False)
 
-    # Provera da li korisnik ima pravo da briše
     discussion = Discussion.query.get(discussion_id)
     if not discussion:
         flash('Diskusija nije pronađena.', 'warning')
@@ -238,7 +236,7 @@ def delete_discussion_ui(discussion_id):
         flash('Nemate dozvolu da obrišete ovu diskusiju.', 'danger')
         return redirect(url_for('index'))
 
-    # Pozivamo backend API koji briše diskusiju
+    # Pozivamo backend API koji brise diskusiju
     response = requests.delete(
         f'http://localhost:5000/api/discussions/{discussion_id}',
         json={'user_id': user_id}
@@ -416,3 +414,11 @@ def vote_ui():
     db.session.commit()
     return jsonify({'message': 'Glas zabeležen'}), 200
 
+@app.route('/profile')
+def profile_ui():
+    if 'user_id' not in session:
+        flash("Morate biti prijavljeni da biste pristupili profilu.", "warning")
+        return redirect(url_for('login'))
+
+    user = User.query.get_or_404(session['user_id'])
+    return render_template('profile.html', user=user)

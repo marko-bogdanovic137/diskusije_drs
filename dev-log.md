@@ -1,17 +1,13 @@
 
 # Dev Log – Platforma za diskusije
 
-> Pratim sve što radim na projektu, dan po dan. Ideja je da mogu na kraju da objasnim šta sam sve radio i da ne zaboravim nijedan detalj. Nisam ranije radio full stack projekat ovako, pa idem korak po korak uz pomoć asistenta.
-
----
-
 ## Dan 1
 
 - Instalirao Python i pipenv
-- Instalirao MySQL i napravio novu šemu `diskusije`
+- Instalirao MySQL i napravio novu semu `diskusije`
 - Napravio osnovni Flask API (folder `engine`)
 - Napravio `User` model
-- Podesio konekciju na bazu pomoću `.env`
+- Podesio konekciju na bazu pomocu `.env`
 - Pokrenuo migracije, povezalo se s bazom
 
 ## Dan 2
@@ -28,33 +24,20 @@
 - Napisao rute: `POST` i `GET` diskusije
 - Dodao `discussion_routes.py` i povezao u `app.py`
 - Testirao u Postman-u sa pravim podacima (user_id, topic, itd.)
-- Updateovao `README.md` i nastavio da pišem ovaj log
+- Updateovao `README.md`
 
 ## Dan 4
 
-- Omogućena izmena korisničkog profila (PUT /update-profile/<user_id>)
-- Dodata validacija inputa i zaštita korisničkih podataka
-- Testirano preko Postman-a
+- Omogućena izmena korisnickog profila (PUT /update-profile/<user_id>)
+- Dodata validacija inputa i zastita korisničkih podataka
+- Dodate preostale tabele, resen problem sa constraintovima
+- Implementirana vecina backend funkcija u frontend
 
----
 
-## Plan za dalje
+## Dan 5
+- Dodata opcija za izmenu korisnickog profila
+- Ispravljeni razni bugovi
+- Zavrsene preostale implementacije koje su nedostajale
 
-- Komentari
-- Like/dislike
-- Mention sistem i email obaveštenja
-- WebSocket za automatsko osvežavanje zahteva (ako stignem)
 
----
-
-## Tehnologije
-
-- Python + Flask
-- SQLAlchemy + Flask-Migrate
-- MySQL lokalni server
-- Pipenv
-- Postman (testiranje API-ja)
-- Git + GitHub
-
----
 

@@ -37,16 +37,9 @@ Postojeće tabele:
 - `users` – korisnički podaci + status odobrenja
 - `discussions` – diskusije objavljene od strane korisnika
 - `alembic_version` – interna tabela za praćenje migracija
-
-## Do sada implementirano
-
-- Povezan Flask API sa MySQL bazom
-- Kreiran `User` model
-- Registrovanje korisnika (uz pending status)
-- Pregled i odobravanje korisnika od strane admina
-- Kreiranje i listanje diskusija
-- Flask-Migrate migracioni sistem
-- Git repozitorijum postavljen
+- `comments` - tabela komentara koji su vezani za roditeljsku diskusiju
+-`likes_dislikes` - tabela koja prati statistiku lajkova/dislajkova za roditeljsku diskusiju
+-`topics` - tabela tema
 
 ## Struktura projekta
 diskusije-projekat/
@@ -55,11 +48,17 @@ diskusije-projekat/
 │ ├── app.py # Glavna Flask aplikacija (API servis)
 │ ├── extensions.py # SQLAlchemy + Migrate ekstenzije
 │ ├── models.py # SQLAlchemy modeli (User, Discussion)
+│ ├── email_utils # setovan sistem mailovanja
+│ ├── 
 │ ├── routes/
 │ │ ├── auth_routes.py # Rute za registraciju, login, admin potvrdu
-│ │ └── discussion_routes.py # Rute za diskusije (GET, POST)
+│ │ ├── discussion_routes.py # Rute za diskusije (GET, POST)
+│ │ ├── comment_routes.py # Komentari
+│ │ ├── topic_routes # Teme
+│ │ └── vote_routes # lajkovi/dsilajkovi
 │ ├── migrations/ # Flask-Migrate fajlovi
 │ └── .env # Environment varijable
+│ └── templates/ #html stranice
 │
 ├── Pipfile
 ├── Pipfile.lock
@@ -74,7 +73,7 @@ diskusije-projekat/
 - SQLAlchemy
 - Flask-Migrate
 - Pipenv
-- MySQL (lokalno, preko Workbench-a)
-- Postman (za testiranje API zahteva)
-- Git (verzionisanje)
+- MySQL 
+- Postman 
+- Git 
 
