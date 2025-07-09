@@ -17,7 +17,7 @@ def create_discussion():
     
     topic = Topic.query.get(topic)
     if not topic:
-        return jsonify({'error': 'Tema nije pronađena'}), 404
+        return jsonify({'error': 'Tema nije pronadjena'}), 404
 
     discussion = Discussion(
         title=title,
@@ -28,7 +28,7 @@ def create_discussion():
     db.session.add(discussion)
     db.session.commit()
 
-    return jsonify({'message': 'Diskusija uspešno kreirana'}), 201
+    return jsonify({'message': 'Diskusija uspesno kreirana'}), 201
 
 
 @discussion_bp.route('/discussions', methods=['GET'])
@@ -50,21 +50,20 @@ def get_discussions():
 @discussion_bp.route('/discussions/<int:discussion_id>', methods=['DELETE'])
 def delete_discussion(discussion_id):
     data = request.get_json()
-    user_id = data.get('user_id')  # Privremeno dok nemamo autentifikaciju
+    user_id = data.get('user_id')
 
     discussion = Discussion.query.get(discussion_id)
     if not discussion:
-        return jsonify({'error': 'Diskusija nije pronađena'}), 404
+        return jsonify({'error': 'Diskusija nije pronadjena'}), 404
 
     user = User.query.get(user_id)
     if not user:
         return jsonify({'error': 'Korisnik ne postoji'}), 404
 
-    # Dozvoljeno je da briše autor ili admin
+    # Dozvoljeno je da brise autor ili admin
     if discussion.user_id != user_id and not user.is_admin:
         return jsonify({'error': 'Nemate dozvolu da obrišete ovu diskusiju'}), 403
 
-    # ❗ Ručno brišemo komentare
     Comment.query.filter_by(discussion_id=discussion.id).delete()
 
     db.session.delete(discussion)
@@ -106,7 +105,7 @@ def search_discussions():
 @discussion_bp.route('/discussions/<int:discussion_id>', methods=['PUT'])
 def update_discussion(discussion_id):
     data = request.get_json()
-    user_id = data.get('user_id')  # dolazi iz frontenda (dok nemamo autentifikaciju)
+    user_id = data.get('user_id') 
 
     discussion = Discussion.query.get(discussion_id)
     if not discussion:
@@ -120,7 +119,6 @@ def update_discussion(discussion_id):
     if discussion.user_id != user_id and not user.is_admin:
         return jsonify({'error': 'Nemate dozvolu da izmenite ovu diskusiju'}), 403
 
-    # Izmena polja ako su prosleđena
     title = data.get('title')
     content = data.get('content')
     topic = data.get('topic')

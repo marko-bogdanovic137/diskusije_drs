@@ -72,7 +72,7 @@ def delete_comment(comment_id):
         return jsonify({'error': 'Korisnik ne postoji'}), 404
 
     if comment.user_id != user_id and not user.is_admin and comment.discussion.user_id != user_id:
-        return jsonify({'error': 'Nemate dozvolu da obrišete ovaj komentar'}), 403
+        return jsonify({'error': 'Nemate dozvolu da obrisete ovaj komentar'}), 403
 
     db.session.delete(comment)
     db.session.commit()

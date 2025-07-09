@@ -294,7 +294,7 @@ def delete_topic_ui(topic_id):
         return redirect(url_for('topics_ui'))
 
     if topic.discussions:
-        flash("Ne možete obrisati temu jer postoje diskusije koje je koriste.", "danger")
+        flash("Ne mozete obrisati temu jer postoje diskusije koje je koriste.", "danger")
         return redirect(url_for('topics_ui'))
 
     db.session.delete(topic)
@@ -319,7 +319,7 @@ def add_topic_ui():
         topic = Topic(name=name, description=description)
         db.session.add(topic)
         db.session.commit()
-        flash('Tema uspešno dodata.', 'success')
+        flash('Tema uspesno dodata.', 'success')
         return redirect(url_for('topics_ui'))
 
     return render_template('add_topic.html')
@@ -412,7 +412,7 @@ def vote_ui():
         db.session.add(new_vote)
 
     db.session.commit()
-    return jsonify({'message': 'Glas zabeležen'}), 200
+    return jsonify({'message': 'Glas zabelezen'}), 200
 
 @app.route('/profile')
 def profile_ui():
